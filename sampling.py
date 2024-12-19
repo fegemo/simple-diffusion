@@ -24,9 +24,12 @@ def sample(config, device, model=None, diffusion_params=None):
     plt.clf()
     ctx = F.one_hot(torch.randint(0, 5, (32,)), 5).to(device=device).float()
     samples, intermediate = sample_ddim_context(config, device, model, 32, ctx, diffusion_params)
+    
     preview_path = os.path.join(config.log_folder, config.run_string, "previews")
+    os.makedirs(preview_path, exist_ok=True)
     animation_ddim_context = plot_sample(intermediate, 32, 4, preview_path, "ani_run",
                                          None, save=False)
+    animation_ddim_context.save(os.path.join(preview_path, "animation.gif"))
     # HTML(animation_ddim_context.to_jshtml())
 
 

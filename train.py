@@ -82,16 +82,16 @@ def train(config, device, dataloader):
         is_last_epoch = ep == int(epochs - 1)
         if is_every_nth_epoch or is_last_epoch:
             os.makedirs(checkpoints_path, exist_ok=True)
-            torch.save(model.state_dict(), checkpoints_path + f"context_model_{ep}.pth")
-            logging.info(f"Saved model at {checkpoints_path} context_model_{ep}.pth")
+            torch.save(model.state_dict(), os.path.join(checkpoints_path, f"context_model_{ep}.pth"))
+            logging.info(f"Saved model at {checkpoints_path}/context_model_{ep}.pth")
 
     elapsed_time = time.time() - initial_time
     logging.info(f"Finished training. Took {seconds_to_human_readable(elapsed_time)}.")
 
     diffusion_params = {
-        b_t: b_t,
-        a_t: a_t,
-        ab_t: ab_t
+        "b_t": b_t,
+        "a_t": a_t,
+        "ab_t": ab_t
     }
     return model, diffusion_params
 

@@ -1,5 +1,6 @@
 import logging
 import sys
+import os
 
 import torch
 from torch.utils.data import DataLoader
@@ -22,6 +23,7 @@ def train_and_sample():
     # getting the options and basic setup
     config, parser = OptionParser().parse(sys.argv[1:], True)
     logging.info(f"Running with options: {parser.get_description(', ', ':')}")
+    parser.save_configuration(os.path.join(config.log_folder, config.run_string), sys.argv)
 
     if config.verbose:
         logging.debug(f"Torch version: {torch.__version__}")
