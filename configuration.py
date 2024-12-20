@@ -77,6 +77,10 @@ class OptionParser(metaclass=SingletonMeta):
         self.parser.add_argument("--time-steps", type=int, help="number of time steps for the "
                                                                 "diffusion process", default=TIME_STEPS)
 
+        self.parser.add_argument("--sampler", help="sampling method (ddpm or ddim)", default="ddpm")
+        self.parser.add_argument("--ckpt", help="path to the checkpoint to load and perform sampling "
+                                 "(without training)", default="")
+
         self.parser.add_argument("--callback-evaluate-fid",
                                  help="every few update steps, evaluate with the FID metric the performance "
                                       "on the train and test sets",

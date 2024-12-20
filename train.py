@@ -24,14 +24,9 @@ def train(config, device, dataloader):
 
     # sets up training configuration
     # construct DDPM noise schedule
-    beta1 = config.beta_1
-    beta2 = config.beta_2
     time_steps = config.time_steps
-
-    b_t = (beta2 - beta1) * torch.linspace(0, 1, time_steps + 1, device=device) + beta1
-    a_t = 1 - b_t
-    ab_t = torch.cumsum(a_t.log(), dim=0).exp()
-    ab_t[0] = 1
+    diffusion_params = create_diffusion_params(config, device)
+    ab_t = diffusion_params["ab_t"]
 
     optim = torch.optim.Adam(model.parameters(), lr=config.lr)
 
@@ -88,12 +83,7 @@ def train(config, device, dataloader):
     elapsed_time = time.time() - initial_time
     logging.info(f"Finished training. Took {seconds_to_human_readable(elapsed_time)}.")
 
-    diffusion_params = {
-        "b_t": b_t,
-        "a_t": a_t,
-        "ab_t": ab_t
-    }
-    return model, diffusion_params
+    return model
 
 #
 # def __init__(config, device, dataloader):

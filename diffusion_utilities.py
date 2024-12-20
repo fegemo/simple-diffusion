@@ -1,3 +1,4 @@
+import logging
 import torch
 import torch.nn as nn
 import numpy as np
@@ -192,12 +193,13 @@ def gen_tst_context(n_cfeat):
     return len(vec), vec
 
 
-def plot_grid(x, n_sample, n_rows, save_dir, w):
+def plot_grid(x, number_of_samples, number_of_rows, save_path=None):
     # x:(n_sample, 3, h, w)
-    ncols = n_sample // n_rows
+    ncols = number_of_samples // number_of_rows
     grid = make_grid(norm_torch(x), nrow=ncols)  # curiously, nrow is number of columns.. or number of items in the row.
-    save_image(grid, save_dir + f"run_image_w{w}.png")
-    print('saved image at ' + save_dir + f"run_image_w{w}.png")
+    if save_path is not None:
+        save_image(grid, save_path)
+        logging.info(f"Saved image at {save_path}")
     return grid
 
 
@@ -266,3 +268,15 @@ transform = transforms.Compose([
     transforms.Normalize((0.5,), (0.5,))  # range [-1,1]
 
 ])
+
+def create_diffusion_params(config, device):
+    b_t = (config.beta_2 - config.beta_1) * torch.linspace(0, 1, config.time_steps + 1, device=device) + config.beta_1
+    a_t = 1 - b_t
+    ab_t = torch.cumsum(a_t.log(), dim=0).exp()
+    ab_t[0] = 1
+    return {
+        "a_t": a_t,
+        "b_t": b_t,
+        "ab_t": ab_t
+    }
+

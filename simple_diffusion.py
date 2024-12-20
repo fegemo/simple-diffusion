@@ -34,17 +34,17 @@ def train_and_sample():
 
     torch.manual_seed(config.seed)
     if config.verbose:
-        logging.debug("SEED set to: ", config.seed)
+        logging.debug(f"SEED set to: {config.seed}")
 
     # loads the dataset
     dataset = CustomDataset(config.images, config.labels, transform, null_context=False)
     dataloader = DataLoader(dataset, batch_size=config.batch, shuffle=True, num_workers=1)
 
     # starts training
-    model, diffusion_params = train(config, device, dataloader)
+    model = train(config, device, dataloader)
 
     # generates images with the trained model
-    sample(config, device, model, diffusion_params)
+    sample(config, device, model, config.epochs)
 
 
 if __name__ == '__main__':
